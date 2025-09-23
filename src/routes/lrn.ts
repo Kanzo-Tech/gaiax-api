@@ -1,12 +1,13 @@
 import { Router } from "express";
 import axios from "axios";
+import { didToUrl } from "../utils/resolver";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
-  const { vatId, lrnDid } = req.body;
-  if (!vatId || !lrnDid) {
-    return res.status(400).json({ error: "faltan campos: vatId, lrnDid" });
+  const { did, vatId } = req.body;
+  if (!did || !vatId) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
   const url =
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
       "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/participant",
     ],
     type: "gx:legalRegistrationNumber",
-    id: lrnDid,
+    id: didToUrl(`${did}:credentials:lrn.json`),
     "gx:vatID": vatId,
   };
 
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
     return res.json(data);
   } catch (err: any) {
     return res.status(500).json({
-      error: "Error en notary LRN",
+      error: "Error in notary LRN",
       details: err.message,
     });
   }

@@ -1,21 +1,23 @@
 import { Router } from "express";
 import { signVC } from "../utils/signer";
 import { hashVC } from "../utils/hash";
-import { v4 as uuidv4 } from "uuid";
+import { didToUrl } from "../utils/resolver";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
-  const { did, privateKeyPem, legalName, country, lrnDid, termsVC } = req.body;
+  const { did, privateKey, legalName, country } = req.body;
 
-  if (!did || !privateKeyPem || !legalName || !country || !lrnDid || !termsVC) {
+  if (!did || !privateKey || !legalName || !country) {
     return res.status(400).json({
-      error:
-        "faltan campos: did, privateKeyPem, legalName, country, lrnDid, termsVC",
+      error: "Missing required fields",
     });
   }
 
   try {
+    const termsVC = await fetch(didToUrl(`${did}:credentials:terms.json`)).then(
+      (res) => res.json(),
+    );
     const termsHash = hashVC(termsVC);
 
     const participantVC = {
@@ -25,26 +27,27 @@ router.post("/", async (req, res) => {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
       ],
       type: ["VerifiableCredential"],
-      id: `urn:uuid:${uuidv4()}`,
+      id: didToUrl(`${did}:credentials:participant.json`),
       issuer: did,
       issuanceDate: new Date().toISOString(),
       credentialSubject: {
-        id: `${did}#subject`,
+        id: didToUrl(`${did}#subject`),
         type: "gx:LegalParticipant",
         "gx:legalName": legalName,
-
-        "gx:legalRegistrationNumber": { id: lrnDid + "#subject" },
+        "gx:legalRegistrationNumber": {
+          id: didToUrl(`${did}:credentials:lrn.json#subject`),
+        },
         "gx:headquarterAddress": { "gx:countrySubdivisionCode": country },
         "gx:legalAddress": { "gx:countrySubdivisionCode": country },
         "gx-terms-and-conditions:gaiaxTermsAndConditions": termsHash,
       },
     };
 
-    const signed = await signVC(participantVC, privateKeyPem, did);
+    const signed = await signVC(participantVC, privateKey, did);
     return res.json(signed);
   } catch (err: any) {
     return res.status(500).json({
-      error: "Error firmando Participant VC",
+      error: "Error signing Participant VerifiableCredential",
       details: err.message,
     });
   }

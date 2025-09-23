@@ -1,37 +1,43 @@
 import { Router } from "express";
-import axios from "axios";
+import { signVC } from "../utils/signer";
+import { didToUrl } from "../utils/resolver";
 
 const router = Router();
 
+const TERMS_AND_CONDITIONS =
+  "The PARTICIPANT signing the Self-Description agrees as follows:\n- to update its descriptions about any changes, be it technical, organizational, or legal - especially but not limited to contractual in regards to the indicated attributes present in the descriptions.\n\nThe keypair used to sign Verifiable Credentials will be revoked where Gaia-X Association becomes aware of any inaccurate statements in regards to the claims which result in a non-compliance with the Trust Framework and policy rules defined in the Policy Rules and Labelling Document (PRLD).";
+
 router.post("/", async (req, res) => {
-  const { vatId, lrnUrl } = req.body;
-  if (!vatId || !lrnUrl) {
-    return res
-      .status(400)
-      .json({ error: "faltan campos: vatId, lrnUrl (público resoluble)" });
+  const { did, privateKey } = req.body;
+  if (!did || !privateKey) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const url =
-    "https://registrationnumber.notary.lab.gaia-x.eu/v1/registrationNumberVC";
-
-  const payload = {
+  const vc = {
     "@context": [
-      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/participant",
+      "https://www.w3.org/2018/credentials/v1",
+      "https://w3id.org/security/suites/jws-2020/v1",
+      "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
     ],
-    type: "gx:legalRegistrationNumber",
-    id: lrnUrl,
-    "gx:vatID": vatId,
+    id: didToUrl(`${did}:credentials:terms.json`),
+    type: ["VerifiableCredential", "TermsAndConditionsCredential"],
+    issuer: did,
+    issuanceDate: new Date().toISOString(),
+    credentialSubject: {
+      id: `${did}#subject`,
+      type: "gx:GaiaXTermsAndConditions",
+      "gx:termsAndConditions": TERMS_AND_CONDITIONS,
+    },
   };
 
   try {
-    const { data } = await axios.post(url, payload, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return res.json(data);
+    const signed = await signVC(vc, privateKey, did);
+    return res.json(signed);
   } catch (err: any) {
-    return res
-      .status(500)
-      .json({ error: "Error en notary LRN", details: err.message });
+    return res.status(500).json({
+      error: "Error signing Terms VerifiableCredential",
+      details: err.message,
+    });
   }
 });
 
