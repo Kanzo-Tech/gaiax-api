@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signVC } from "../utils/signer";
+import { signVerifiableCredential } from "../utils/signer";
 import { didToUrl } from "../utils/resolver";
 
 const router = Router();
@@ -21,18 +21,18 @@ router.post("/", async (req, res) => {
       "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
     ],
     id: didToUrl(`${did}:credentials:terms.json`),
-    type: ["VerifiableCredential", "TermsAndConditionsCredential"],
+    type: "VerifiableCredential",
     issuer: did,
     issuanceDate: new Date().toISOString(),
     credentialSubject: {
-      id: `${did}#subject`,
+      id: didToUrl(`${did}#subject`),
       type: "gx:GaiaXTermsAndConditions",
       "gx:termsAndConditions": TERMS_AND_CONDITIONS,
     },
   };
 
   try {
-    const signed = await signVC(vc, privateKey, did);
+    const signed = await signVerifiableCredential(vc, privateKey, did);
     return res.json(signed);
   } catch (err: any) {
     return res.status(500).json({
