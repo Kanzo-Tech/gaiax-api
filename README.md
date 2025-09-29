@@ -14,12 +14,12 @@ Endpoints:
 ## 🚀 Despliegue con Docker Compose
 
 ### 1. Levantar servicio
+
 ```bash
 docker compose up -d
 ```
 
-La API quedará corriendo en: http://localhost:3000`
-
+La API quedará corriendo en: http://localhost:3000
 
 ## 🔑 Generar claves ED25519
 
@@ -30,7 +30,7 @@ openssl genpkey -algorithm ED25519 -out ed25519-private.pem
 openssl pkey -in ed25519-private.pem -pubout -out ed25519-public.pem
 ```
 
-El contenido de `ed25519-private.pem` lo pasarás en el campo `privateKeyPem`.
+El contenido de `ed25519-private.pem` lo pasarás en el campo `privateKey`.
 
 ---
 
@@ -43,12 +43,14 @@ curl -X POST http://localhost:3000/api/lrn \
   -H "Content-Type: application/json" \
   -d '{
     "vatId": "BE0762747721",
-    "lrnDid": "did:web:identity.kanzo.tech:users:alice:lrn.json"
+    "did": "did:web:identity.kanzo.tech:users:alice"
   }'
 ```
 
 Devuelve un **LRN VC** emitido por el notary de Gaia‑X.
-El `id` es un **DID Web** resoluble, que debe corresponder a un recurso accesible en tu dominio público
+El `did` es un **DID Web** resoluble, que debe corresponder a un recurso accesible en tu dominio público.
+
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:lrn.json`, de modo que pueda ser resuelto públicamente.
 
 ### 2. Generar Terms VC
 
@@ -57,9 +59,11 @@ curl -X POST http://localhost:3000/api/terms \
   -H "Content-Type: application/json" \
   -d '{
     "did": "did:web:identity.kanzo.tech:users:alice",
-    "privateKeyPem": "-----BEGIN PRIVATE KEY-----\n..."
+    "privateKey": "-----BEGIN PRIVATE KEY-----\n..."
   }'
 ```
+
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:tc.json`, de modo que pueda ser resuelto públicamente.
 
 ### 3. Generar Participant VC
 
@@ -68,13 +72,13 @@ curl -X POST http://localhost:3000/api/participant \
   -H "Content-Type: application/json" \
   -d '{
     "did": "did:web:identity.kanzo.tech:users:alice",
-    "privateKeyPem": "-----BEGIN PRIVATE KEY-----\n...",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\n...",
     "legalName": "MyCompany S.A.",
-    "country": "ES",
-    "lrnDid": "did:web:identity.kanzo.tech:users:alice:lrn.json",
-    "termsVC": { ... Terms VC firmado ... }
+    "country": "ES"
   }'
 ```
+
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:participant.json`, de modo que pueda ser resuelto públicamente. 
 
 ### 4. Enviar a Compliance
 
@@ -82,10 +86,6 @@ curl -X POST http://localhost:3000/api/participant \
 curl -X POST http://localhost:3000/api/compliance \
   -H "Content-Type: application/json" \
   -d '{
-    "credentials": [
-      { ... Terms VC firmado ... },
-      { ... Participant VC firmado ... },
-      { ... LRN VC del notary ... }
-    ]
+    "did": "did:web:identity.kanzo.tech:users:alice"
   }'
 ```
