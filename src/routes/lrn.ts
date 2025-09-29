@@ -10,9 +10,6 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const url =
-    "https://registrationnumber.notary.lab.gaia-x.eu/v1/registrationNumberVC";
-
   const payload = {
     "@context": [
       "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/participant",
@@ -23,9 +20,13 @@ router.post("/", async (req, res) => {
   };
 
   try {
-    const { data } = await axios.post(url, payload, {
-      headers: { "Content-Type": "application/json" },
-    });
+    const { data } = await axios.post(
+      "https://registrationnumber.notary.lab.gaia-x.eu/v1/registrationNumberVC",
+      payload,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
     return res.json(data);
   } catch (err: any) {
     return res.status(500).json({

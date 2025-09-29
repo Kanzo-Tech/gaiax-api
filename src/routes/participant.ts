@@ -2,6 +2,7 @@ import { Router } from "express";
 import { signVC } from "../utils/signer";
 import { hashVC } from "../utils/hash";
 import { didToUrl } from "../utils/resolver";
+import { fetchCredential } from "../utils/fetch";
 
 const router = Router();
 
@@ -15,10 +16,9 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const termsVC = await fetch(didToUrl(`${did}:credentials:terms.json`)).then(
-      (res) => res.json(),
-    );
-    const termsHash = hashVC(termsVC);
+    const termsURL = didToUrl(`${did}:credentials:terms.json`);
+    const terms = await fetchCredential(termsURL);
+    const termsHash = hashVC(terms);
 
     const participantVC = {
       "@context": [
