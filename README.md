@@ -24,6 +24,7 @@ La API quedará corriendo en: http://localhost:3000
 ## 🔑 Claves
 
 Se requiere de un DID y una clave privada previas, generadas a través del servicio [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen).
+Se asume también que el certificado ha sido publicado en la carpeta `${did}:certs:cert.pem`.
 
 ---
 
