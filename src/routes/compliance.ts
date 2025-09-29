@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
   try {
     const participantUrl = didToUrl(`${did}:credentials:participant.json`);
     const lrnUrl = didToUrl(`${did}:credentials:lrn.json`);
-    const termsUrl = didToUrl(`${did}:credentials:tc.json`);
+    const termsUrl = didToUrl(`${did}:credentials:terms.json`);
 
     const [participant, lrn, terms] = await Promise.all([
       fetchCredential(participantUrl),
