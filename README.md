@@ -63,7 +63,7 @@ curl -X POST http://localhost:3000/api/terms \
   }'
 ```
 
-El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:terms.json`, de modo que pueda ser resuelto públicamente.
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:tc.json`, de modo que pueda ser resuelto públicamente.
 
 ### 3. Generar Participant VC
 
