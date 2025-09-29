@@ -21,16 +21,9 @@ docker compose up -d
 
 La API quedará corriendo en: http://localhost:3000
 
-## 🔑 Generar claves ED25519
+## 🔑 Claves
 
-En local, antes de hacer peticiones al API:
-
-```bash
-openssl genpkey -algorithm ED25519 -out ed25519-private.pem
-openssl pkey -in ed25519-private.pem -pubout -out ed25519-public.pem
-```
-
-El contenido de `ed25519-private.pem` lo pasarás en el campo `privateKey`.
+Se requiere de un DID y una clave privada previas, generadas a través del servicio [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen).
 
 ---
 
@@ -63,9 +56,11 @@ curl -X POST http://localhost:3000/api/terms \
   }'
 ```
 
-El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:tc.json`, de modo que pueda ser resuelto públicamente.
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:terms.json`, de modo que pueda ser resuelto públicamente.
 
 ### 3. Generar Participant VC
+
+Antes de ejecutar la llamada a la API, asegúrate de haber generado y publicado el VC de términos y condiciones.
 
 ```bash
 curl -X POST http://localhost:3000/api/participant \
@@ -78,7 +73,7 @@ curl -X POST http://localhost:3000/api/participant \
   }'
 ```
 
-El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:participant.json`, de modo que pueda ser resuelto públicamente. 
+El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:participant.json`, de modo que pueda ser resuelto públicamente.
 
 ### 4. Enviar a Compliance
 
