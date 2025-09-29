@@ -8,7 +8,8 @@ const TERMS_AND_CONDITIONS =
   "The PARTICIPANT signing the Self-Description agrees as follows:\n- to update its descriptions about any changes, be it technical, organizational, or legal - especially but not limited to contractual in regards to the indicated attributes present in the descriptions.\n\nThe keypair used to sign Verifiable Credentials will be revoked where Gaia-X Association becomes aware of any inaccurate statements in regards to the claims which result in a non-compliance with the Trust Framework and policy rules defined in the Policy Rules and Labelling Document (PRLD).";
 
 router.post("/", async (req, res) => {
-  const { did, privateKey } = req.body;
+  let { did, privateKey } = req.body;
+
   if (!did || !privateKey) {
     return res.status(400).json({ error: "Missing required fields" });
   }

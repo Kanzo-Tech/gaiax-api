@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
         "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
       ],
       type: ["VerifiableCredential"],
-      id: didToUrl(`${did}:credentials:participant.json`),
+      id: `${did}#Participant`,
       issuer: did,
       issuanceDate: new Date().toISOString(),
       credentialSubject: {
