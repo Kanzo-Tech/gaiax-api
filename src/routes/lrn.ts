@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
 
   try {
     const { data } = await axios.post(
-      "https://registrationnumber.notary.lab.gaia-x.eu/v1/registrationNumberVC",
+      "https://registration.lab.gaia-x.eu/v1-staging/registrationNumberVC",
       payload,
       {
         headers: { "Content-Type": "application/json" },
