@@ -53,7 +53,24 @@ curl -X POST http://localhost:3000/api/terms \
   -H "Content-Type: application/json" \
   -d '{
     "did": "did:web:identity.kanzo.tech:users:alice",
-    "privateKey": "-----BEGIN PRIVATE KEY-----\n..."
+    "jwk": {
+      "alg": "RS256",
+      "d": ...",
+      "dp": "...",
+      "dq": "...",
+      "e": "AQAB",
+      "ext": true,
+      "key_ops": [
+        "sign"
+      ],
+      "kty": "RSA",
+      "n": "...",
+      "p": "...",
+      "q": "...",
+      "qi": "...",
+      "kid": "...",
+      "use": "sig"
+    }
   }'
 ```
 
@@ -68,9 +85,26 @@ curl -X POST http://localhost:3000/api/participant \
   -H "Content-Type: application/json" \
   -d '{
     "did": "did:web:identity.kanzo.tech:users:alice",
-    "privateKey": "-----BEGIN PRIVATE KEY-----\n...",
     "legalName": "MyCompany S.A.",
-    "country": "ES"
+    "country": "ES",
+    "jwk": {
+      "alg": "RS256",
+      "d": ...",
+      "dp": "...",
+      "dq": "...",
+      "e": "AQAB",
+      "ext": true,
+      "key_ops": [
+        "sign"
+      ],
+      "kty": "RSA",
+      "n": "...",
+      "p": "...",
+      "q": "...",
+      "qi": "...",
+      "kid": "...",
+      "use": "sig"
+    }
   }'
 ```
 
