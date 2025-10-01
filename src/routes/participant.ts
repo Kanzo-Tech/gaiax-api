@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
       issuer: did,
       issuanceDate: new Date().toISOString(),
       credentialSubject: {
-        id: didToUrl(`${did}#subject`),
+        id: didToUrl(`${did}:credentials:participant.json#subject`),
         type: "gx:LegalParticipant",
         "gx:legalName": legalName,
         "gx:legalRegistrationNumber": {
