@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signVerifiableCredential } from "../utils/signer";
+import { signCredential } from "../utils/signer";
 import { didToUrl } from "../utils/resolver";
 
 const router = Router();
@@ -8,9 +8,9 @@ const TERMS_AND_CONDITIONS =
   "The PARTICIPANT signing the Self-Description agrees as follows:\n- to update its descriptions about any changes, be it technical, organizational, or legal - especially but not limited to contractual in regards to the indicated attributes present in the descriptions.\n\nThe keypair used to sign Verifiable Credentials will be revoked where Gaia-X Association becomes aware of any inaccurate statements in regards to the claims which result in a non-compliance with the Trust Framework and policy rules defined in the Policy Rules and Labelling Document (PRLD).";
 
 router.post("/", async (req, res) => {
-  let { did, privateKey } = req.body;
+  let { did, jwk } = req.body;
 
-  if (!did || !privateKey) {
+  if (!did || !jwk) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
   };
 
   try {
-    const signed = await signVerifiableCredential(vc, privateKey, did);
+    const signed = await signCredential(vc, jwk, did);
     return res.json(signed);
   } catch (err: any) {
     return res.status(500).json({

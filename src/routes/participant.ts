@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signVerifiableCredential } from "../utils/signer";
+import { signCredential } from "../utils/signer";
 import { hashVC } from "../utils/hash";
 import { didToUrl } from "../utils/resolver";
 import { fetchCredential } from "../utils/fetch";
@@ -7,9 +7,9 @@ import { fetchCredential } from "../utils/fetch";
 const router = Router();
 
 router.post("/", async (req, res) => {
-  const { did, privateKey, legalName, country } = req.body;
+  const { did, jwk, legalName, country } = req.body;
 
-  if (!did || !privateKey || !legalName || !country) {
+  if (!did || !jwk || !legalName || !country) {
     return res.status(400).json({
       error: "Missing required fields",
     });
@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
         type: "gx:LegalParticipant",
         "gx:legalName": legalName,
         "gx:legalRegistrationNumber": {
-          id: didToUrl(`${did}:credentials:lrn.json#subject`),
+          id: didToUrl(`${did}:credentials:lrn.json`),
         },
         "gx:headquarterAddress": { "gx:countrySubdivisionCode": country },
         "gx:legalAddress": { "gx:countrySubdivisionCode": country },
@@ -43,11 +43,7 @@ router.post("/", async (req, res) => {
       },
     };
 
-    const signed = await signVerifiableCredential(
-      participantVC,
-      privateKey,
-      did,
-    );
+    const signed = await signCredential(participantVC, jwk, did);
     return res.json(signed);
   } catch (err: any) {
     return res.status(500).json({
