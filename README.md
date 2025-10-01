@@ -16,7 +16,8 @@ Endpoints:
 ### 1. Levantar servicio
 
 ```bash
-docker compose up -d
+docker compose down
+docker compose up --build
 ```
 
 La API quedará corriendo en: http://localhost:3000
