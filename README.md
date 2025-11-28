@@ -87,7 +87,7 @@ curl -X POST http://localhost:3000/api/participant \
   -d '{
     "did": "did:web:identity.kanzo.tech:users:alice",
     "legalName": "MyCompany S.A.",
-    "country": "ES",
+    "country": "ES-CN",
     "jwk": {
       "alg": "RS256",
       "d": ...",
