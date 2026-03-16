@@ -25,6 +25,7 @@ La API quedará corriendo en: http://localhost:3000
 ## 🔑 Claves
 
 Se requiere de un DID y una clave privada previas, generadas a través del servicio [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen).
+Los recursos necesarios (did, certificado, clave, algoritmo de firma) para el correcto funcionamiento del servicio pueden obtenerse descargando el ZIP que hemos generado previamente al utilizar [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen).
 Se asume también que el certificado ha sido publicado en la carpeta `${did}:certs:cert.pem`.
 
 ---
@@ -74,7 +75,7 @@ curl -X POST http://localhost:3000/api/terms \
     }
   }'
 ```
-
+El JWK corresponde a la clave privada de RSA que hemos generado previamente utilizando [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen). 
 El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:terms.json`, de modo que pueda ser resuelto públicamente.
 
 ### 3. Generar Participant VC
@@ -108,7 +109,7 @@ curl -X POST http://localhost:3000/api/participant \
     }
   }'
 ```
-
+El JWK corresponde a la clave privada de RSA que hemos generado previamente utilizando [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen). 
 El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:participant.json`, de modo que pueda ser resuelto públicamente.
 
 ### 4. Enviar a Compliance
@@ -120,3 +121,6 @@ curl -X POST http://localhost:3000/api/compliance \
     "did": "did:web:identity.kanzo.tech:users:alice"
   }'
 ```
+Debe devolver unas Verifiable Credentials con nuestra información, este proceso tarda unos segundos.
+
+Si no devuelve nada, es posible que el servicio esté caído. Puede comprobarse intentando conseguir el Compliance de manera manual utilizando el [Gaia-X Wizard](https://wizard.lab.gaia-x.eu/)
