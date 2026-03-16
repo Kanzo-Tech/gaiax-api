@@ -110,6 +110,7 @@ curl -X POST http://localhost:3000/api/participant \
   }'
 ```
 El JWK corresponde a la clave privada de RSA que hemos generado previamente utilizando [crypto-gen](https://github.com/Kanzo-Tech/crypto-gen). 
+
 El VC generado se debe publicar en `did:web:identity.kanzo.tech:users:alice:credentials:participant.json`, de modo que pueda ser resuelto públicamente.
 
 ### 4. Enviar a Compliance
